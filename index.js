@@ -1,5 +1,6 @@
 const htmlparser = require('htmlparser2');
 const fs = require('fs');
+const CSSSelect = require('css-select');
 
 
 function html2Dom(html) {
@@ -29,6 +30,9 @@ const getElement = node => {
   if (node.type == 'tag') {
     return new Proxy(node, {
       get: function(target, key) {
+        if (Selectors[key]) {
+          return getSelector(Selectors[key](node));
+        }
         return Reflect.get(target, key);
       },
       set: function(target, key, value) {
@@ -36,6 +40,16 @@ const getElement = node => {
       }
     });
   }
+};
+
+const getSelector = fn => selector => {
+  const node = fn(selector);
+  return node;
+};
+
+const Selectors = {
+  querySelector: dom => selector =>
+    getElement(CSSSelect.selectOne(selector, dom))
 };
 
 async function main() {
