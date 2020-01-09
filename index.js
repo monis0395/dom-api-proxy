@@ -88,5 +88,13 @@ const Selectors = {
 async function main() {
   const dom = await html2Dom(html);
   const document = getElement(rootElement(dom));
+  // query without proxy
+  console.log(getOuterHTML(CSSSelect('title', dom)));
+  // query with proxied dom
+  console.log(document.querySelector('title').outerHTML);
+  // some other proxied dom api examples
+  console.log(document.querySelector('form').attribs);
+  console.log((document.querySelector('form').attribs.action = '/index'));
+  console.log(document.querySelector('form').attribs);
 }
 main();
