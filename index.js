@@ -1,12 +1,10 @@
 const htmlparser = require('htmlparser2');
-const fs = require('fs');
 const CSSSelect = require('css-select');
 const {
   getText,
   getInnerHTML,
   getOuterHTML
 } = require('domutils/lib/stringify');
-
 
 function html2Dom(html) {
   const handler = new htmlparser.DomHandler();
@@ -15,7 +13,6 @@ function html2Dom(html) {
   parser.end();
   return handler.dom;
 }
-const html = fs.readFileSync('./sample.html');
 
 const rootElement = dom => {
   if (Array.isArray(dom)) {
@@ -85,16 +82,14 @@ const Selectors = {
     CSSSelect.selectAll(`[name=${selector}]`, dom).map(getElement)
 };
 
-async function main() {
-  const dom = await html2Dom(html);
+function parse(html) {
+  const dom = html2Dom(html);
   const document = getElement(rootElement(dom));
-  // query without proxy
-  console.log(getOuterHTML(CSSSelect('title', dom)));
-  // query with proxied dom
-  console.log(document.querySelector('title').outerHTML);
-  // some other proxied dom api examples
-  console.log(document.querySelector('form').attribs);
-  console.log((document.querySelector('form').attribs.action = '/index'));
-  console.log(document.querySelector('form').attribs);
+  return document;
 }
-main();
+
+exports.parse = parse;
+exports.html2Dom = html2Dom;
+exports.getElement = getElement;
+exports.rootElement = rootElement;
+exports.Selectors = Selectors;
